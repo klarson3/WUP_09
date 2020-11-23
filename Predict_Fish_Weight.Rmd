@@ -102,8 +102,32 @@ SmeltData <-filter(fishdata,Species=="Smelt") %>% select(-Species)
 
 ```
 
+#now automate
 
+```{r}
+library(leaps)
+regsubsets.out <-
+    regsubsets(Weight ~ .,
+               data = SmeltData,
+               nbest = 1,       # 1 best model for each number of predictors
+               nvmax = NULL,    # NULL for no limit on number of variables
+               force.in = NULL, force.out = NULL,
+               method = "exhaustive")
+
+summary.out <- summary(regsubsets.out)
+as.data.frame(summary.out$outmat)
+library(car)
+subsets(regsubsets.out,statistic="adjr2",legend="bottomright",main="Adjusted R^2")
+```
+  
+```{r}
+SmeltModel<- lm(Weight~Length2+Width, data=SmeltData)
+summary.lm(SmeltModel)
+```
+  
+The two regressor model for Smelt is Length2 and Width. The adjusted R-squared is .9645. 
 
 # Discussion and Final Conclusion
-
+  
+Based on the three regression models, the one for Smelt is the best based on the adjusted R-squared being .9645. The second best is Perch with an adjusted R-squared of .94, and the worst is Smelt with a .9356. 
 <!--Discussion and conclusion here.  If you found a relationship be sure to consider whether the relationship occurs because one of the variavbles causes the other, or whether they perhasps are related for some other reason.  Watch the chapter 6 videos from the GeorgeTown videos collection.!-->
